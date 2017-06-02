@@ -6,8 +6,8 @@
 #ifndef _NIDS_UTIL_H
 #define _NIDS_UTIL_H
 
-#define mknew(x)	(x *)test_malloc(sizeof(x))
-#define b_comp(x,y)	(!memcmp(&(x), &(y), sizeof(x)))
+#define mknew(x)    (x *)test_malloc(sizeof(x))
+#define b_comp(x,y) (!memcmp(&(x), &(y), sizeof(x)))
 
 struct proc_node {
   void (*item)();

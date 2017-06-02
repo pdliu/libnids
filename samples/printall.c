@@ -13,7 +13,7 @@ See the file COPYING for license details.
 #include <stdio.h>
 #include "nids.h"
 
-#define int_ntoa(x)	inet_ntoa(*((struct in_addr *)&x))
+#define int_ntoa(x) inet_ntoa(*((struct in_addr *)&x))
 
 // struct tuple4 contains addresses and port numbers of the TCP connections
 // the following auxiliary function produces a string looking like
@@ -74,7 +74,7 @@ tcp_callback (struct tcp_stream *a_tcp, void ** this_time_not_needed)
 
       if (a_tcp->server.count_new_urg)
       {
-        // new byte of urgent data has arrived 
+        // new byte of urgent data has arrived
         strcat(buf,"(urgent->)");
         buf[strlen(buf)+1]=0;
         buf[strlen(buf)]=a_tcp->server.urgdata;
@@ -85,36 +85,36 @@ tcp_callback (struct tcp_stream *a_tcp, void ** this_time_not_needed)
       // because we haven't increased a_tcp->client.collect_urg variable.
       // So, we have some normal data to take care of.
       if (a_tcp->client.count_new)
-	{
+    {
           // new data for client
-	  hlf = &a_tcp->client; // from now on, we will deal with hlf var,
+      hlf = &a_tcp->client; // from now on, we will deal with hlf var,
                                 // which will point to client side of conn
-	  strcat (buf, "(<-)"); // symbolic direction of data
-	}
+      strcat (buf, "(<-)"); // symbolic direction of data
+    }
       else
-	{
-	  hlf = &a_tcp->server; // analogical
-	  strcat (buf, "(->)");
-	}
+    {
+      hlf = &a_tcp->server; // analogical
+      strcat (buf, "(->)");
+    }
     fprintf(stderr,"%s",buf); // we print the connection parameters
                               // (saddr, daddr, sport, dport) accompanied
                               // by data flow direction (-> or <-)
 
    write(2,hlf->data,hlf->count_new); // we print the newly arrived data
-      
+
     }
   return ;
 }
 
-int 
+int
 main ()
 {
   // here we can alter libnids params, for instance:
   // nids_params.n_hosts=256;
   if (!nids_init ())
   {
-  	fprintf(stderr,"%s\n",nids_errbuf);
-  	exit(1);
+    fprintf(stderr,"%s\n",nids_errbuf);
+    exit(1);
   }
   nids_register_tcp (tcp_callback);
   nids_run ();

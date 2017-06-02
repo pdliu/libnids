@@ -47,7 +47,7 @@ enum
 # define NIDS_CLOSE 3
 # define NIDS_RESET 4
 # define NIDS_TIMED_OUT 5
-# define NIDS_EXITING   6	/* nids is exiting; last chance to get data */
+# define NIDS_EXITING   6   /* nids is exiting; last chance to get data */
 
 # define NIDS_DO_CHKSUM  0
 # define NIDS_DONT_CHKSUM 1
@@ -85,7 +85,7 @@ struct half_stream
   u_short window;
   u_char ts_on;
   u_char wscale_on;
-  u_int curr_ts; 
+  u_int curr_ts;
   u_int wscale;
   struct skbuff *list;
   struct skbuff *listtail;
@@ -170,10 +170,10 @@ extern u_int nids_linkoffset;
 extern struct tcp_timeout *nids_tcp_timeouts;
 
 struct nids_chksum_ctl {
-	u_int netaddr;
-	u_int mask;
-	u_int action;
-	u_int reserved;
+    u_int netaddr;
+    u_int mask;
+    u_int action;
+    u_int reserved;
 };
 extern void nids_register_chksum_ctl(struct nids_chksum_ctl *, int);
 

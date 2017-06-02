@@ -23,7 +23,7 @@ static int
 gettime()
 {
   struct timeval tv;
-  
+
   if (timenow)
     return timenow;
   gettimeofday(&tv, 0);
@@ -73,7 +73,7 @@ detect_scan(struct ip * iph)
 
   if (nids_params.scan_num_hosts <= 0)
     return;
-  
+
   th = (struct tcphdr *) (((char *) iph) + 4 * iph->ip_hl);
   hash = scan_hash(iph->ip_src.s_addr);
   this_host = hashhost[hash];
@@ -92,16 +92,16 @@ detect_scan(struct ip * iph)
       this_host = oldest;
     else {
       this_host = (struct host *) malloc(sizeof(struct host) + \
-		    (nids_params.scan_num_ports + 1) * sizeof(struct scan));
+            (nids_params.scan_num_ports + 1) * sizeof(struct scan));
       if (!this_host)
-	nids_params.no_mem("detect_scan");
+    nids_params.no_mem("detect_scan");
       this_host->packets = (struct scan *) (((char *) this_host) + sizeof(struct host));
       if (hashhost[hash]) {
-	hashhost[hash]->prev = this_host;
-	this_host->next = hashhost[hash];
+    hashhost[hash]->prev = this_host;
+    this_host->next = hashhost[hash];
       }
       else
-	this_host->next = 0;
+    this_host->next = 0;
       this_host->prev = 0;
       hashhost[hash] = this_host;
     }
@@ -114,7 +114,7 @@ detect_scan(struct ip * iph)
   this_host->modtime = gettime();
   for (i = 0; i < this_host->n_packets; i++)
     if (this_host->packets[i].addr == iph->ip_dst.s_addr &&
-	this_host->packets[i].port == ntohs(th->th_dport))
+    this_host->packets[i].port == ntohs(th->th_dport))
       return;
   this_host->packets[this_host->n_packets].addr = iph->ip_dst.s_addr;
   this_host->packets[this_host->n_packets].port = ntohs(th->th_dport);

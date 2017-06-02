@@ -68,20 +68,20 @@ global variable
 declared as follows:
 .Bd -literal
 struct nids_prm {
-	int	n_tcp_streams;
-	int	n_hosts;
-	char	*device;
-	int	sk_buff_size;
-	int	dev_addon;
-	void	(*syslog)(int type, int err, struct ip *iph, void *data);
-	int	syslog_level;
-	int	scan_num_hosts;
-	int	scan_num_ports;
-	int	scan_delay;
-	void	(*no_mem)(void);
-	int	(*ip_filter)(struct ip *iph);
-	char	*pcap_filter;
-	int pcap_timeout;
+        int     n_tcp_streams;
+        int     n_hosts;
+        char    *device;
+        int     sk_buff_size;
+        int     dev_addon;
+        void    (*syslog)(int type, int err, struct ip *iph, void *data);
+        int     syslog_level;
+        int     scan_num_hosts;
+        int     scan_num_ports;
+        int     scan_delay;
+        void    (*no_mem)(void);
+        int     (*ip_filter)(struct ip *iph);
+        char    *pcap_filter;
+        int pcap_timeout;
 } nids_params;
 .Ed
 .Pp
@@ -102,11 +102,11 @@ variable as the argument (instead of pcap_open_live()). Default value: NULL
 Interface to monitor. Default value:
 .Dv NULL
 (in which case an appropriate device is determined automatically). If  this
-variable is assigned value 
-.Nm all, libnids will attempt to capture packets on all interfaces (which 
+variable is assigned value
+.Nm all, libnids will attempt to capture packets on all interfaces (which
 works on Linux only)
 .It Fa sk_buff_size
-Size of 
+Size of
 .Fa struct sk_buff
 (used for queuing packets), which should be set to match the value on
 the hosts being monitored. Default value: 168
@@ -119,7 +119,7 @@ type)
 .It Fa syslog
 Syslog callback function, used to report unusual conditions, such as
 port scan attempts, invalid TCP header flags, etc. Default value:
-.Fa nids_syslog 
+.Fa nids_syslog
 (which logs messages via
 .Xr syslog 3
 without regard for message rate per second or free disk space)
@@ -146,10 +146,10 @@ Out-of-memory callback function, used to terminate the calling process
 gracefully.
 .It Fa ip_filter
 IP filtering callback function, used to selectively discard
-IP packets, inspected after reassembly. If 
+IP packets, inspected after reassembly. If
 the function returns a non-zero value, the packet is processed;
 otherwise, it is discarded. Default value:
-.Fn nids_ip_filter 
+.Fn nids_ip_filter
 (which always returns 1)
 .It Fa pcap_filter
 .Xr pcap 3
@@ -157,11 +157,11 @@ filter string applied to the link-layer (raw, unassembled) packets.
 .Sy Note:
 filters like ``tcp dst port 23'' will NOT correctly handle
 appropriately fragmented traffic, e.g. 8-byte IP fragments. One should add
-"or (ip[6:2] & 0x1fff != 0)" at the end of the filter to process reassembled 
+"or (ip[6:2] & 0x1fff != 0)" at the end of the filter to process reassembled
 packets. Default value:
 .Dv NULL
 .lt Fa promisc
-If non-zero, libnids will set the interface(s) it listens on to 
+If non-zero, libnids will set the interface(s) it listens on to
 promiscuous mode. Default value: 1
 .It Fa one_loop_less
 Disabled by default see comments in API.html file
@@ -192,32 +192,32 @@ validated and reassembled by
 registers a user-defined callback function to process TCP streams
 validated and reassembled by
 .Nm libnids .
-The 
+The
 .Va tcp_stream
 structure is defined as follows:
 .Bd -literal
 struct tcp_stream {
-	struct tuple4 {
-		u_short source;
-		u_short	dest;
-		u_int	saddr;
-		u_int	daddr;
-	} addr;
-	char			nids_state;
-	struct half_stream {
-		char	state;
-		char	collect;
-		char	collect_urg;
-		char	*data;
-		u_char	urgdata;
-		int	count;
-		int	offset;
-		int	count_new;
-		char	count_new_urg;
-		...
-	} client;
-	struct half_stream	server;
-	...
+        struct tuple4 {
+                u_short source;
+                u_short dest;
+                u_int   saddr;
+                u_int   daddr;
+        } addr;
+        char                    nids_state;
+        struct half_stream {
+                char    state;
+                char    collect;
+                char    collect_urg;
+                char    *data;
+                u_char  urgdata;
+                int     count;
+                int     offset;
+                int     count_new;
+                char    count_new_urg;
+                ...
+        } client;
+        struct half_stream      server;
+        ...
 };
 .Ed
 .Pp
@@ -287,7 +287,7 @@ wishes to receive in the future by setting non-zero values for the
 .Va collect
 or
 .Va collect_urg
-variables in the appropriate 
+variables in the appropriate
 .Va client
 or
 .Va server half_stream
@@ -320,7 +320,7 @@ bytes to discard from the beginning of the
 buffer (updating the
 .Va offset
 value accordingly) after the TCP callback function exists. Otherwise,
-the new data (totalling 
+the new data (totalling
 .Va count_new
 bytes) will be discarded by default.
 .Pp
@@ -338,7 +338,7 @@ offline.  On success, returns the count of packets processed, which may
 be zero upon EOF (offline read) or upon hitting
 .Va pcap_timeout
 (if supported by your platform).  On failure, returns -1, putting an
-appropriate error message in 
+appropriate error message in
 .Va nids_errbuf .
 .Pp
 .Fn nids_next
@@ -369,11 +369,11 @@ struct nids_chksum_ctl {
     u_int action;
     /* private members */
 };
-.Ed 
+.Ed
 .Pp
 Internal checksumming functions will first check elements of this array one
 by one, and if the source ip SRCIP of the current packet satisfies condition
-   
+
        (SRCIP&chksum_ctl_array[i].mask)==chksum_ctl_array[i].netaddr
 
 then if the

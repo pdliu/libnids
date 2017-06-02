@@ -15,7 +15,7 @@
 #define LOG_MAX 100
 #define SZLACZEK "\n--------------------------------------------------\n"
 
-#define int_ntoa(x)	inet_ntoa(*((struct in_addr *)&x))
+#define int_ntoa(x) inet_ntoa(*((struct in_addr *)&x))
 
 char *
 adres (struct tuple4 addr)
@@ -45,14 +45,14 @@ sniff_callback (struct tcp_stream *a_tcp, void **this_time_not_needed)
     {
       dest = a_tcp->addr.dest;
       if (dest == 21 || dest == 23 || dest == 110 || dest == 143 || dest == 513)
-	a_tcp->server.collect++;
+    a_tcp->server.collect++;
       return;
     }
   if (a_tcp->nids_state != NIDS_DATA)
     {
       // seems the stream is closing, log as much as possible
       do_log (adres (a_tcp->addr), a_tcp->server.data,
-	      a_tcp->server.count - a_tcp->server.offset);
+          a_tcp->server.count - a_tcp->server.offset);
       return;
     }
   if (a_tcp->server.count - a_tcp->server.offset < LOG_MAX)
@@ -61,8 +61,8 @@ sniff_callback (struct tcp_stream *a_tcp, void **this_time_not_needed)
       nids_discard (a_tcp, 0);
       return;
     }
-    
-  // enough data  
+
+  // enough data
   do_log (adres (a_tcp->addr), a_tcp->server.data, LOG_MAX);
 
   // Now procedure sniff_callback doesn't want to see this stream anymore.

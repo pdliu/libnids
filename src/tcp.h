@@ -14,7 +14,7 @@ struct skbuff {
   u_int len;
   u_int truesize;
   u_int urg_ptr;
-  
+
   char fin;
   char urg;
   u_int seq;

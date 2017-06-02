@@ -71,9 +71,9 @@ provides the functionality of a network intrusion detection system
 (NIDS) E-box component. It currently performs:
 .LP
 .nf
-	1. IP defragmentation
-	2. TCP stream reassembly
-	3. TCP port scan detection
+        1. IP defragmentation
+        2. TCP stream reassembly
+        3. TCP port scan detection
 .fi
 .PP
 .B libnids
@@ -88,27 +88,27 @@ global variable \fInids_params\fR, declared as follows:
 .LP
 .nf
 struct nids_prm {
-	int	n_tcp_streams;
-	int	n_hosts;
-	char	*device;
-	char	*filename;
-	int	sk_buff_size;
-	int	dev_addon;
-	void	(*syslog)(int type, int err, struct ip *iph, void *data);
-	int	syslog_level;
-	int	scan_num_hosts;
-	int	scan_num_ports;
-	int	scan_delay;
-	void	(*no_mem)(void);
-	int	(*ip_filter)(struct ip *iph);
-	char	*pcap_filter;
-	int	promisc;
-	int	one_loop_less;
-	int	pcap_timeout;
-	int	multiproc;
-	int	queue_limit;
-	int	tcp_workarounds;
-	pcap_t	*pcap_desc;
+        int     n_tcp_streams;
+        int     n_hosts;
+        char    *device;
+        char    *filename;
+        int     sk_buff_size;
+        int     dev_addon;
+        void    (*syslog)(int type, int err, struct ip *iph, void *data);
+        int     syslog_level;
+        int     scan_num_hosts;
+        int     scan_num_ports;
+        int     scan_delay;
+        void    (*no_mem)(void);
+        int     (*ip_filter)(struct ip *iph);
+        char    *pcap_filter;
+        int     promisc;
+        int     one_loop_less;
+        int     pcap_timeout;
+        int     multiproc;
+        int     queue_limit;
+        int     tcp_workarounds;
+        pcap_t  *pcap_desc;
 } nids_params;
 .fi
 .PP
@@ -129,8 +129,8 @@ variable as the argument (instead of pcap_open_live()). Default value: NULL
 .TP
 .I device
 Interface to monitor. Default value: NULL (in which case an
-appropriate device is determined automatically). If this variable is assigned 
-value \fBall\fR, libnids will attempt to capture packets on all interfaces 
+appropriate device is determined automatically). If this variable is assigned
+value \fBall\fR, libnids will attempt to capture packets on all interfaces
 (which works on Linux only)
 .TP
 .I sk_buff_size
@@ -225,7 +225,7 @@ packets (including IP fragments, packets with invalid checksums, etc.).
 .PP
 .BR nids_unregister_ip_frag ()
 unregisters a user-defined callback function to process all incoming IP
-packets. 
+packets.
 .PP
 .BR nids_register_ip ()
 registers a user-defined callback function to process IP packets
@@ -248,28 +248,28 @@ structure is defined as follows:
 .LP
 .nf
 struct tcp_stream {
-	struct tuple4 {
-		u_short source;
-		u_short	dest;
-		u_int	saddr;
-		u_int	daddr;
-	} addr;
-	char			nids_state;
-	struct half_stream {
-		char	state;
-		char	collect;
-		char	collect_urg;
-		char	*data;
-		u_char	urgdata;
-		int	count;
-		int	offset;
-		int	count_new;
-		char	count_new_urg;
-		...
-	} client;
-	struct half_stream	server;
-	...
-	void			*user;
+        struct tuple4 {
+                u_short source;
+                u_short dest;
+                u_int   saddr;
+                u_int   daddr;
+        } addr;
+        char                    nids_state;
+        struct half_stream {
+                char    state;
+                char    collect;
+                char    collect_urg;
+                char    *data;
+                u_char  urgdata;
+                int     count;
+                int     offset;
+                int     count_new;
+                char    count_new_urg;
+                ...
+        } client;
+        struct half_stream      server;
+        ...
+        void                    *user;
 };
 .fi
 .PP
@@ -395,18 +395,18 @@ defined as follows:
 .LP
 .nf
 struct nids_chksum_ctl {
-	u_int netaddr;
-	u_int mask;
-	u_int action;
-	/* private members */
+        u_int netaddr;
+        u_int mask;
+        u_int action;
+        /* private members */
 };
 .fi
 .PP
 Internal checksumming functions will first check elements of this array one
 by one, and if the source ip SRCIP of the current packet satisfies condition
-                                                       
+
        (SRCIP&chksum_ctl_array[i].mask)==chksum_ctl_array[i].netaddr
-                                                       
+
 then if  the \fIaction\fR field is \fBNIDS_DO_CHKSUM\fR, the packet will be
 checksummed; if the \fIaction\fR field is \fBNIDS_DONT_CHKSUM\fR, the packet
 will not be checksummed.  If the packet matches none of the array elements,

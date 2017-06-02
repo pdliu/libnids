@@ -34,7 +34,7 @@ enum {
   TCP_CLOSE_WAIT,
   TCP_LAST_ACK,
   TCP_LISTEN,
-  TCP_CLOSING			/* now a valid state */
+  TCP_CLOSING           /* now a valid state */
 };
 
 #endif
@@ -135,7 +135,7 @@ nids_free_tcp_stream(struct tcp_stream * a_tcp)
   del_tcp_closing_timeout(a_tcp);
   purge_queue(&a_tcp->server);
   purge_queue(&a_tcp->client);
-   
+
   if (a_tcp->next_node)
     a_tcp->next_node->prev_node = a_tcp->prev_node;
   if (a_tcp->prev_node)
@@ -154,9 +154,9 @@ nids_free_tcp_stream(struct tcp_stream * a_tcp)
     tcp_oldest = a_tcp->prev_time;
   if (a_tcp == tcp_latest)
     tcp_latest = a_tcp->next_time;
-  
+
   i = a_tcp->listeners;
-  
+
   while (i) {
     j = i->next;
     free(i);
@@ -199,25 +199,25 @@ static int get_ts(struct tcphdr * this_tcphdr, unsigned int * ts)
   unsigned char * options = (unsigned char*)(this_tcphdr + 1);
   int ind = 0, ret = 0;
   while (ind <=  len - (int)sizeof (struct tcphdr) - 10 )
-  	switch (options[ind]) {
-		case 0: /* TCPOPT_EOL */
-			return ret;
-		case 1: /* TCPOPT_NOP */
-			ind++;
-			continue;	
-  		case 8: /* TCPOPT_TIMESTAMP */
-	  		memcpy((char*)&tmp_ts, options + ind + 2, 4);
-  			*ts=ntohl(tmp_ts);
-			ret = 1;
-			/* no break, intentionally */
-		default:	
-			if (options[ind+1] < 2 ) /* "silly option" */
-				return ret;
-			ind += options[ind+1];
-	}			
-			
+    switch (options[ind]) {
+        case 0: /* TCPOPT_EOL */
+            return ret;
+        case 1: /* TCPOPT_NOP */
+            ind++;
+            continue;
+        case 8: /* TCPOPT_TIMESTAMP */
+            memcpy((char*)&tmp_ts, options + ind + 2, 4);
+            *ts=ntohl(tmp_ts);
+            ret = 1;
+            /* no break, intentionally */
+        default:
+            if (options[ind+1] < 2 ) /* "silly option" */
+                return ret;
+            ind += options[ind+1];
+    }
+
   return ret;
-}  		
+}
 
 static int get_wscale(struct tcphdr * this_tcphdr, unsigned int * ws)
 {
@@ -227,29 +227,29 @@ static int get_wscale(struct tcphdr * this_tcphdr, unsigned int * ws)
   int ind = 0, ret = 0;
   *ws=1;
   while (ind <=  len - (int)sizeof (struct tcphdr) - 3 )
-  	switch (options[ind]) {
-		case 0: /* TCPOPT_EOL */
-			return ret;
-		case 1: /* TCPOPT_NOP */
-			ind++;
-			continue;	
-  		case 3: /* TCPOPT_WSCALE */
-  			tmp_ws=options[ind+2];
-  			if (tmp_ws>14) 
-  				tmp_ws=14;
-			*ws=1<<tmp_ws;
-			ret = 1;
-			/* no break, intentionally */
-		default:	
-			if (options[ind+1] < 2 ) /* "silly option" */
-				return ret;
-			ind += options[ind+1];
-	}			
-			
-  return ret;
-}  		
+    switch (options[ind]) {
+        case 0: /* TCPOPT_EOL */
+            return ret;
+        case 1: /* TCPOPT_NOP */
+            ind++;
+            continue;
+        case 3: /* TCPOPT_WSCALE */
+            tmp_ws=options[ind+2];
+            if (tmp_ws>14)
+                tmp_ws=14;
+            *ws=1<<tmp_ws;
+            ret = 1;
+            /* no break, intentionally */
+        default:
+            if (options[ind+1] < 2 ) /* "silly option" */
+                return ret;
+            ind += options[ind+1];
+    }
 
-    
+  return ret;
+}
+
+
 
 
 static void
@@ -259,13 +259,13 @@ add_new_tcp(struct tcphdr * this_tcphdr, struct ip * this_iphdr)
   struct tcp_stream *a_tcp;
   int hash_index;
   struct tuple4 addr;
-  
+
   addr.source = ntohs(this_tcphdr->th_sport);
   addr.dest = ntohs(this_tcphdr->th_dport);
   addr.saddr = this_iphdr->ip_src.s_addr;
   addr.daddr = this_iphdr->ip_dst.s_addr;
   hash_index = mk_hash_index(addr);
-  
+
   if (tcp_num > max_stream) {
     struct lurker_node *i;
     int orig_client_state=tcp_oldest->client.state;
@@ -282,7 +282,7 @@ add_new_tcp(struct tcphdr * this_tcphdr, struct ip * this_iphdr)
     pause();
   }
   free_streams = a_tcp->next_free;
-  
+
   tcp_num++;
   tolink = tcp_stream_table[hash_index];
   memset(a_tcp, 0, sizeof(struct tcp_stream));
@@ -313,21 +313,21 @@ static void
 add2buf(struct half_stream * rcv, char *data, int datalen)
 {
   int toalloc;
-  
+
   if (datalen + rcv->count - rcv->offset > rcv->bufsize) {
     if (!rcv->data) {
       if (datalen < 2048)
-	toalloc = 4096;
+    toalloc = 4096;
       else
-	toalloc = datalen * 2;
+    toalloc = datalen * 2;
       rcv->data = malloc(toalloc);
       rcv->bufsize = toalloc;
     }
     else {
       if (datalen < rcv->bufsize)
-      	toalloc = 2 * rcv->bufsize;
-      else	
-      	toalloc = rcv->bufsize + 2*datalen;
+        toalloc = 2 * rcv->bufsize;
+      else
+        toalloc = rcv->bufsize + 2*datalen;
       rcv->data = realloc(rcv->data, toalloc);
       rcv->bufsize = toalloc;
     }
@@ -344,7 +344,7 @@ ride_lurkers(struct tcp_stream * a_tcp, char mask)
 {
   struct lurker_node *i;
   char cc, sc, ccu, scu;
-  
+
   for (i = a_tcp->listeners; i; i = i->next)
     if (i->whatto & mask) {
       cc = a_tcp->client.collect;
@@ -354,21 +354,21 @@ ride_lurkers(struct tcp_stream * a_tcp, char mask)
 
       (i->item) (a_tcp, &i->data);
       if (cc < a_tcp->client.collect)
-	i->whatto |= COLLECT_cc;
+    i->whatto |= COLLECT_cc;
       if (ccu < a_tcp->client.collect_urg)
-	i->whatto |= COLLECT_ccu;
+    i->whatto |= COLLECT_ccu;
       if (sc < a_tcp->server.collect)
-	i->whatto |= COLLECT_sc;
+    i->whatto |= COLLECT_sc;
       if (scu < a_tcp->server.collect_urg)
-	i->whatto |= COLLECT_scu;
+    i->whatto |= COLLECT_scu;
       if (cc > a_tcp->client.collect)
-	i->whatto &= ~COLLECT_cc;
+    i->whatto &= ~COLLECT_cc;
       if (ccu > a_tcp->client.collect_urg)
-	i->whatto &= ~COLLECT_ccu;
+    i->whatto &= ~COLLECT_ccu;
       if (sc > a_tcp->server.collect)
-	i->whatto &= ~COLLECT_sc;
+    i->whatto &= ~COLLECT_sc;
       if (scu > a_tcp->server.collect_urg)
-	i->whatto &= ~COLLECT_scu;
+    i->whatto &= ~COLLECT_scu;
     }
 }
 
@@ -394,21 +394,21 @@ notify(struct tcp_stream * a_tcp, struct half_stream * rcv)
     else
       mask = COLLECT_sc;
    do {
-	int total;
-		a_tcp->read = rcv->count - rcv->offset;
-		  total=a_tcp->read;
-  
-	    ride_lurkers(a_tcp, mask);
-	    if (a_tcp->read>total-rcv->count_new)
-	    	rcv->count_new=total-a_tcp->read;
-	    
-	    if (a_tcp->read > 0) {
-	      memmove(rcv->data, rcv->data + a_tcp->read, rcv->count - rcv->offset - a_tcp->read);
-	      rcv->offset += a_tcp->read;
-	    }
-	}while (nids_params.one_loop_less && a_tcp->read>0 && rcv->count_new); 
+    int total;
+        a_tcp->read = rcv->count - rcv->offset;
+          total=a_tcp->read;
+
+        ride_lurkers(a_tcp, mask);
+        if (a_tcp->read>total-rcv->count_new)
+            rcv->count_new=total-a_tcp->read;
+
+        if (a_tcp->read > 0) {
+          memmove(rcv->data, rcv->data + a_tcp->read, rcv->count - rcv->offset - a_tcp->read);
+          rcv->offset += a_tcp->read;
+        }
+    }while (nids_params.one_loop_less && a_tcp->read>0 && rcv->count_new);
 // we know that if one_loop_less!=0, we have only one callback to notify
-   rcv->count_new=0;	    
+   rcv->count_new=0;
   }
  prune_listeners:
   prev_addr = &a_tcp->listeners;
@@ -427,13 +427,13 @@ notify(struct tcp_stream * a_tcp, struct half_stream * rcv)
 
 static void
 add_from_skb(struct tcp_stream * a_tcp, struct half_stream * rcv,
-	     struct half_stream * snd,
-	     u_char *data, int datalen,
-	     u_int this_seq, char fin, char urg, u_int urg_ptr)
+         struct half_stream * snd,
+         u_char *data, int datalen,
+         u_int this_seq, char fin, char urg, u_int urg_ptr)
 {
   u_int lost = EXP_SEQ - this_seq;
   int to_copy, to_copy2;
-  
+
   if (urg && after(urg_ptr, EXP_SEQ - 1) &&
       (!rcv->urg_seen || after(urg_ptr, rcv->urg_ptr))) {
     rcv->urg_ptr = urg_ptr;
@@ -444,12 +444,12 @@ add_from_skb(struct tcp_stream * a_tcp, struct half_stream * rcv,
     to_copy = rcv->urg_ptr - (this_seq + lost);
     if (to_copy > 0) {
       if (rcv->collect) {
-	add2buf(rcv, (char *)(data + lost), to_copy);
-	notify(a_tcp, rcv);
+    add2buf(rcv, (char *)(data + lost), to_copy);
+    notify(a_tcp, rcv);
       }
       else {
-	rcv->count += to_copy;
-	rcv->offset = rcv->count; /* clear the buffer */
+    rcv->count += to_copy;
+    rcv->offset = rcv->count; /* clear the buffer */
       }
     }
     rcv->urgdata = data[rcv->urg_ptr - this_seq];
@@ -461,24 +461,24 @@ add_from_skb(struct tcp_stream * a_tcp, struct half_stream * rcv,
     to_copy2 = this_seq + datalen - rcv->urg_ptr - 1;
     if (to_copy2 > 0) {
       if (rcv->collect) {
-	add2buf(rcv, (char *)(data + lost + to_copy + 1), to_copy2);
-	notify(a_tcp, rcv);
+    add2buf(rcv, (char *)(data + lost + to_copy + 1), to_copy2);
+    notify(a_tcp, rcv);
       }
       else {
-	rcv->count += to_copy2;
-	rcv->offset = rcv->count; /* clear the buffer */
+    rcv->count += to_copy2;
+    rcv->offset = rcv->count; /* clear the buffer */
       }
     }
   }
   else {
     if (datalen - lost > 0) {
       if (rcv->collect) {
-	add2buf(rcv, (char *)(data + lost), datalen - lost);
-	notify(a_tcp, rcv);
+    add2buf(rcv, (char *)(data + lost), datalen - lost);
+    notify(a_tcp, rcv);
       }
       else {
-	rcv->count += datalen - lost;
-	rcv->offset = rcv->count; /* clear the buffer */
+    rcv->count += datalen - lost;
+    rcv->offset = rcv->count; /* clear the buffer */
       }
     }
   }
@@ -491,51 +491,51 @@ add_from_skb(struct tcp_stream * a_tcp, struct half_stream * rcv,
 
 static void
 tcp_queue(struct tcp_stream * a_tcp, struct tcphdr * this_tcphdr,
-	  struct half_stream * snd, struct half_stream * rcv,
-	  char *data, int datalen, int skblen
-	  )
+      struct half_stream * snd, struct half_stream * rcv,
+      char *data, int datalen, int skblen
+      )
 {
   u_int this_seq = ntohl(this_tcphdr->th_seq);
   struct skbuff *pakiet, *tmp;
-  
+
   /*
    * Did we get anything new to ack?
    */
-  
+
   if (!after(this_seq, EXP_SEQ)) {
     if (after(this_seq + datalen + (this_tcphdr->th_flags & TH_FIN), EXP_SEQ)) {
       /* the packet straddles our window end */
       get_ts(this_tcphdr, &snd->curr_ts);
       add_from_skb(a_tcp, rcv, snd, (u_char *)data, datalen, this_seq,
-		   (this_tcphdr->th_flags & TH_FIN),
-		   (this_tcphdr->th_flags & TH_URG),
-		   ntohs(this_tcphdr->th_urp) + this_seq - 1);
+           (this_tcphdr->th_flags & TH_FIN),
+           (this_tcphdr->th_flags & TH_URG),
+           ntohs(this_tcphdr->th_urp) + this_seq - 1);
       /*
        * Do we have any old packets to ack that the above
        * made visible? (Go forward from skb)
        */
       pakiet = rcv->list;
       while (pakiet) {
-	if (after(pakiet->seq, EXP_SEQ))
-	  break;
-	if (after(pakiet->seq + pakiet->len + pakiet->fin, EXP_SEQ)) {
-	  add_from_skb(a_tcp, rcv, snd, pakiet->data,
-		       pakiet->len, pakiet->seq, pakiet->fin, pakiet->urg,
-		       pakiet->urg_ptr + pakiet->seq - 1);
+    if (after(pakiet->seq, EXP_SEQ))
+      break;
+    if (after(pakiet->seq + pakiet->len + pakiet->fin, EXP_SEQ)) {
+      add_from_skb(a_tcp, rcv, snd, pakiet->data,
+               pakiet->len, pakiet->seq, pakiet->fin, pakiet->urg,
+               pakiet->urg_ptr + pakiet->seq - 1);
         }
-	rcv->rmem_alloc -= pakiet->truesize;
-	if (pakiet->prev)
-	  pakiet->prev->next = pakiet->next;
-	else
-	  rcv->list = pakiet->next;
-	if (pakiet->next)
-	  pakiet->next->prev = pakiet->prev;
-	else
-	  rcv->listtail = pakiet->prev;
-	tmp = pakiet->next;
-	free(pakiet->data);
-	free(pakiet);
-	pakiet = tmp;
+    rcv->rmem_alloc -= pakiet->truesize;
+    if (pakiet->prev)
+      pakiet->prev->next = pakiet->next;
+    else
+      rcv->list = pakiet->next;
+    if (pakiet->next)
+      pakiet->next->prev = pakiet->prev;
+    else
+      rcv->listtail = pakiet->prev;
+    tmp = pakiet->next;
+    free(pakiet->data);
+    free(pakiet);
+    pakiet = tmp;
       }
     }
     else
@@ -564,14 +564,14 @@ tcp_queue(struct tcp_stream * a_tcp, struct tcphdr * this_tcphdr,
     if (pakiet->fin) {
       snd->state = TCP_CLOSING;
       if (rcv->state == FIN_SENT || rcv->state == FIN_CONFIRMED)
-	add_tcp_closing_timeout(a_tcp);
+    add_tcp_closing_timeout(a_tcp);
     }
     pakiet->seq = this_seq;
     pakiet->urg = (this_tcphdr->th_flags & TH_URG);
     pakiet->urg_ptr = ntohs(this_tcphdr->th_urp);
     for (;;) {
       if (!p || !after(p->seq, this_seq))
-	break;
+    break;
       p = p->prev;
     }
     if (!p) {
@@ -581,16 +581,16 @@ tcp_queue(struct tcp_stream * a_tcp, struct tcphdr * this_tcphdr,
          rcv->list->prev = pakiet;
       rcv->list = pakiet;
       if (!rcv->listtail)
-	rcv->listtail = pakiet;
+    rcv->listtail = pakiet;
     }
     else {
       pakiet->next = p->next;
       p->next = pakiet;
       pakiet->prev = p;
       if (pakiet->next)
-	pakiet->next->prev = pakiet;
+    pakiet->next->prev = pakiet;
       else
-	rcv->listtail = pakiet;
+    rcv->listtail = pakiet;
     }
   }
 }
@@ -634,7 +634,7 @@ check_flags(struct ip * iph, struct tcphdr * th)
 
 struct tcp_stream *
 find_stream(struct tcphdr * this_tcphdr, struct ip * this_iphdr,
-	    int *from_client)
+        int *from_client)
 {
   struct tuple4 this_addr, reversed;
   struct tcp_stream *a_tcp;
@@ -689,7 +689,7 @@ void tcp_exit(void)
       a_tcp = a_tcp->next_node;
       for (j = t_tcp->listeners; j; j = j->next) {
           t_tcp->nids_state = NIDS_EXITING;
-	  (j->item)(t_tcp, &j->data);
+      (j->item)(t_tcp, &j->data);
       }
       nids_free_tcp_stream(t_tcp);
     }
@@ -719,30 +719,30 @@ process_tcp(u_char * data, int skblen)
   iplen = ntohs(this_iphdr->ip_len);
   if ((unsigned)iplen < 4 * this_iphdr->ip_hl + sizeof(struct tcphdr)) {
     nids_params.syslog(NIDS_WARN_TCP, NIDS_WARN_TCP_HDR, this_iphdr,
-		       this_tcphdr);
+               this_tcphdr);
     return;
   } // ktos sie bawi
-  
+
   datalen = iplen - 4 * this_iphdr->ip_hl - 4 * this_tcphdr->th_off;
-  
+
   if (datalen < 0) {
     nids_params.syslog(NIDS_WARN_TCP, NIDS_WARN_TCP_HDR, this_iphdr,
-		       this_tcphdr);
+               this_tcphdr);
     return;
   } // ktos sie bawi
 
   if ((this_iphdr->ip_src.s_addr | this_iphdr->ip_dst.s_addr) == 0) {
     nids_params.syslog(NIDS_WARN_TCP, NIDS_WARN_TCP_HDR, this_iphdr,
-		       this_tcphdr);
+               this_tcphdr);
     return;
   }
   if (!(this_tcphdr->th_flags & TH_ACK))
     detect_scan(this_iphdr);
   if (!nids_params.n_tcp_streams) return;
   if (my_tcp_check(this_tcphdr, iplen - 4 * this_iphdr->ip_hl,
-		   this_iphdr->ip_src.s_addr, this_iphdr->ip_dst.s_addr)) {
+           this_iphdr->ip_src.s_addr, this_iphdr->ip_dst.s_addr)) {
     nids_params.syslog(NIDS_WARN_TCP, NIDS_WARN_TCP_HDR, this_iphdr,
-		       this_tcphdr);
+               this_tcphdr);
     return;
   }
 #if 0
@@ -751,8 +751,8 @@ process_tcp(u_char * data, int skblen)
 #endif
   if (!(a_tcp = find_stream(this_tcphdr, this_iphdr, &from_client))) {
     if ((this_tcphdr->th_flags & TH_SYN) &&
-	!(this_tcphdr->th_flags & TH_ACK) &&
-	!(this_tcphdr->th_flags & TH_RST))
+    !(this_tcphdr->th_flags & TH_ACK) &&
+    !(this_tcphdr->th_flags & TH_RST))
       add_new_tcp(this_tcphdr, this_iphdr);
     return;
   }
@@ -776,30 +776,30 @@ process_tcp(u_char * data, int skblen)
     a_tcp->server.ack_seq = ntohl(this_tcphdr->th_ack);
     a_tcp->server.window = ntohs(this_tcphdr->th_win);
     if (a_tcp->client.ts_on) {
-    	a_tcp->server.ts_on = get_ts(this_tcphdr, &a_tcp->server.curr_ts);
-	if (!a_tcp->server.ts_on)
-		a_tcp->client.ts_on = 0;
-    } else a_tcp->server.ts_on = 0;	
+        a_tcp->server.ts_on = get_ts(this_tcphdr, &a_tcp->server.curr_ts);
+    if (!a_tcp->server.ts_on)
+        a_tcp->client.ts_on = 0;
+    } else a_tcp->server.ts_on = 0;
     if (a_tcp->client.wscale_on) {
-    	a_tcp->server.wscale_on = get_wscale(this_tcphdr, &a_tcp->server.wscale);
-	if (!a_tcp->server.wscale_on) {
-		a_tcp->client.wscale_on = 0;
-		a_tcp->client.wscale  = 1;
-		a_tcp->server.wscale = 1;
-	}	
+        a_tcp->server.wscale_on = get_wscale(this_tcphdr, &a_tcp->server.wscale);
+    if (!a_tcp->server.wscale_on) {
+        a_tcp->client.wscale_on = 0;
+        a_tcp->client.wscale  = 1;
+        a_tcp->server.wscale = 1;
+    }
     } else {
-    	a_tcp->server.wscale_on = 0;	
-    	a_tcp->server.wscale = 1;
-    }	
+        a_tcp->server.wscale_on = 0;
+        a_tcp->server.wscale = 1;
+    }
     return;
   }
   if (
-  	! (  !datalen && ntohl(this_tcphdr->th_seq) == rcv->ack_seq  )
-  	&&
-  	( !before(ntohl(this_tcphdr->th_seq), rcv->ack_seq + rcv->window*rcv->wscale) ||
-          before(ntohl(this_tcphdr->th_seq) + datalen, rcv->ack_seq)  
+    ! (  !datalen && ntohl(this_tcphdr->th_seq) == rcv->ack_seq  )
+    &&
+    ( !before(ntohl(this_tcphdr->th_seq), rcv->ack_seq + rcv->window*rcv->wscale) ||
+          before(ntohl(this_tcphdr->th_seq) + datalen, rcv->ack_seq)
         )
-     )     
+     )
      return;
 
   if ((this_tcphdr->th_flags & TH_RST)) {
@@ -808,71 +808,71 @@ process_tcp(u_char * data, int skblen)
 
       a_tcp->nids_state = NIDS_RESET;
       for (i = a_tcp->listeners; i; i = i->next)
-	(i->item) (a_tcp, &i->data);
+    (i->item) (a_tcp, &i->data);
     }
     nids_free_tcp_stream(a_tcp);
     return;
   }
 
   /* PAWS check */
-  if (rcv->ts_on && get_ts(this_tcphdr, &tmp_ts) && 
-  	before(tmp_ts, snd->curr_ts))
-  return; 	
-  
+  if (rcv->ts_on && get_ts(this_tcphdr, &tmp_ts) &&
+    before(tmp_ts, snd->curr_ts))
+  return;
+
   if ((this_tcphdr->th_flags & TH_ACK)) {
     if (from_client && a_tcp->client.state == TCP_SYN_SENT &&
-	a_tcp->server.state == TCP_SYN_RECV) {
+    a_tcp->server.state == TCP_SYN_RECV) {
       if (ntohl(this_tcphdr->th_ack) == a_tcp->server.seq) {
-	a_tcp->client.state = TCP_ESTABLISHED;
-	a_tcp->client.ack_seq = ntohl(this_tcphdr->th_ack);
-	{
-	  struct proc_node *i;
-	  struct lurker_node *j;
-	  void *data;
-	  
-	  a_tcp->server.state = TCP_ESTABLISHED;
-	  a_tcp->nids_state = NIDS_JUST_EST;
-	  for (i = tcp_procs; i; i = i->next) {
-	    char whatto = 0;
-	    char cc = a_tcp->client.collect;
-	    char sc = a_tcp->server.collect;
-	    char ccu = a_tcp->client.collect_urg;
-	    char scu = a_tcp->server.collect_urg;
-	    
-	    (i->item) (a_tcp, &data);
-	    if (cc < a_tcp->client.collect)
-	      whatto |= COLLECT_cc;
-	    if (ccu < a_tcp->client.collect_urg)
-	      whatto |= COLLECT_ccu;
-	    if (sc < a_tcp->server.collect)
-	      whatto |= COLLECT_sc;
-	    if (scu < a_tcp->server.collect_urg)
-	      whatto |= COLLECT_scu;
-	    if (nids_params.one_loop_less) {
-	    		if (a_tcp->client.collect >=2) {
-	    			a_tcp->client.collect=cc;
-	    			whatto&=~COLLECT_cc;
-	    		}
-	    		if (a_tcp->server.collect >=2 ) {
-	    			a_tcp->server.collect=sc;
-	    			whatto&=~COLLECT_sc;
-	    		}
-	    }  
-	    if (whatto) {
-	      j = mknew(struct lurker_node);
-	      j->item = i->item;
-	      j->data = data;
-	      j->whatto = whatto;
-	      j->next = a_tcp->listeners;
-	      a_tcp->listeners = j;
-	    }
-	  }
-	  if (!a_tcp->listeners) {
-	    nids_free_tcp_stream(a_tcp);
-	    return;
-	  }
-	  a_tcp->nids_state = NIDS_DATA;
-	}
+    a_tcp->client.state = TCP_ESTABLISHED;
+    a_tcp->client.ack_seq = ntohl(this_tcphdr->th_ack);
+    {
+      struct proc_node *i;
+      struct lurker_node *j;
+      void *data;
+
+      a_tcp->server.state = TCP_ESTABLISHED;
+      a_tcp->nids_state = NIDS_JUST_EST;
+      for (i = tcp_procs; i; i = i->next) {
+        char whatto = 0;
+        char cc = a_tcp->client.collect;
+        char sc = a_tcp->server.collect;
+        char ccu = a_tcp->client.collect_urg;
+        char scu = a_tcp->server.collect_urg;
+
+        (i->item) (a_tcp, &data);
+        if (cc < a_tcp->client.collect)
+          whatto |= COLLECT_cc;
+        if (ccu < a_tcp->client.collect_urg)
+          whatto |= COLLECT_ccu;
+        if (sc < a_tcp->server.collect)
+          whatto |= COLLECT_sc;
+        if (scu < a_tcp->server.collect_urg)
+          whatto |= COLLECT_scu;
+        if (nids_params.one_loop_less) {
+                if (a_tcp->client.collect >=2) {
+                    a_tcp->client.collect=cc;
+                    whatto&=~COLLECT_cc;
+                }
+                if (a_tcp->server.collect >=2 ) {
+                    a_tcp->server.collect=sc;
+                    whatto&=~COLLECT_sc;
+                }
+        }
+        if (whatto) {
+          j = mknew(struct lurker_node);
+          j->item = i->item;
+          j->data = data;
+          j->whatto = whatto;
+          j->next = a_tcp->listeners;
+          a_tcp->listeners = j;
+        }
+      }
+      if (!a_tcp->listeners) {
+        nids_free_tcp_stream(a_tcp);
+        return;
+      }
+      a_tcp->nids_state = NIDS_DATA;
+    }
       }
       // return;
     }
@@ -886,15 +886,15 @@ process_tcp(u_char * data, int skblen)
 
       a_tcp->nids_state = NIDS_CLOSE;
       for (i = a_tcp->listeners; i; i = i->next)
-	(i->item) (a_tcp, &i->data);
+    (i->item) (a_tcp, &i->data);
       nids_free_tcp_stream(a_tcp);
       return;
     }
   }
   if (datalen + (this_tcphdr->th_flags & TH_FIN) > 0)
     tcp_queue(a_tcp, this_tcphdr, snd, rcv,
-	      (char *) (this_tcphdr) + 4 * this_tcphdr->th_off,
-	      datalen, skblen);
+          (char *) (this_tcphdr) + 4 * this_tcphdr->th_off,
+          datalen, skblen);
   snd->window = ntohs(this_tcphdr->th_win);
   if (rcv->rmem_alloc > 65535)
     prune_queue(rcv, this_tcphdr);
@@ -968,7 +968,7 @@ tcp_init(int size)
 #define ICMP_PROT_UNREACH ICMP_UNREACH_PROTOCOL
 #define ICMP_PORT_UNREACH ICMP_UNREACH_PORT
 #define NR_ICMP_UNREACH   ICMP_MAXTYPE
-#endif				
+#endif
 
 
 void
@@ -985,10 +985,10 @@ process_icmp(u_char * data)
 
   int from_client;
   /* we will use unsigned, to suppress warning; we must be careful with
-     possible wrap when substracting 
+     possible wrap when substracting
      the following is ok, as the ip header has already been sanitized */
   unsigned int len = ntohs(iph->ip_len) - (iph->ip_hl << 2);
-  
+
   if (len < sizeof(STRUCT_ICMP))
     return;
   pkt = (STRUCT_ICMP *) (data + (iph->ip_hl << 2));
@@ -996,10 +996,10 @@ process_icmp(u_char * data)
     return;
   if (pkt->ICMP_TYPE != ICMP_DEST_UNREACH)
     return;
-  /* ok due to check 7 lines above */  
+  /* ok due to check 7 lines above */
   len -= sizeof(STRUCT_ICMP);
   // sizeof(struct icmp) is not what we want here
-  
+
   if (len < sizeof(struct ip))
     return;
 

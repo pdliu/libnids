@@ -19,9 +19,9 @@ main ()
 
   if (!nids_init ())
   {
-  	fprintf(stderr,"%s\n",nids_errbuf);
-  	exit(1);
-  }	
+    fprintf(stderr,"%s\n",nids_errbuf);
+    exit(1);
+  }
   nids_register_tcp (tcp_callback);
   fd = nids_getfd ();
   for (;;)
@@ -32,13 +32,13 @@ main ()
       FD_SET (fd, &rset);
       // add any other fd we need to take care of
       if (select (fd + 1, &rset, 0, 0, &tv))
-	{
-        	if (FD_ISSET(fd,&rset)  // need to test it if there are other
-        				// fd in rset
-			if (!nids_next ()) break;
-	}
+    {
+            if (FD_ISSET(fd,&rset)  // need to test it if there are other
+                        // fd in rset
+            if (!nids_next ()) break;
+    }
       else
-	fprintf (stderr, "%i ", time++);
+    fprintf (stderr, "%i ", time++);
     }
   return 0;
 }

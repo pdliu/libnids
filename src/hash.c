@@ -14,12 +14,12 @@ getrnd ()
   u_int *ptr;
   int fd = open ("/dev/urandom", O_RDONLY);
   if (fd > 0)
-    {
+  {
       read (fd, xor, 12);
       read (fd, perm, 12);
       close (fd);
       return;
-    }
+  }
 
   gettimeofday (&s, 0);
   srand (s.tv_usec);
@@ -34,6 +34,7 @@ getrnd ()
 
 
 }
+
 void
 init_hash ()
 {
@@ -43,12 +44,12 @@ init_hash ()
   for (i = 0; i < 12; i++)
     p[i] = i;
   for (i = 0; i < 12; i++)
-    {
+  {
       n = perm[i] % (12 - i);
       perm[i] = p[n];
       for (j = 0; j < 11 - n; j++)
-	p[n + j] = p[n + j + 1];
-    }
+    p[n + j] = p[n + j + 1];
+  }
 }
 
 u_int
@@ -63,6 +64,9 @@ mkhash (u_int src, u_short sport, u_int dest, u_short dport)
   *(u_short *) (data + 8) = sport;
   *(u_short *) (data + 10) = dport;
   for (i = 0; i < 12; i++)
+  {
     res = ( (res << 8) + (data[perm[i]] ^ xor[i])) % 0xff100f;
+  }
+
   return res;
 }
