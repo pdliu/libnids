@@ -41,26 +41,30 @@ void
 sniff_callback (struct tcp_stream *a_tcp, void **this_time_not_needed)
 {
   int dest;
+
   if (a_tcp->nids_state == NIDS_JUST_EST)
+  {
+    dest = a_tcp->addr.dest;
+    if (dest == 21 || dest == 23 || dest == 110 || dest == 143 || dest == 513)
     {
-      dest = a_tcp->addr.dest;
-      if (dest == 21 || dest == 23 || dest == 110 || dest == 143 || dest == 513)
-    a_tcp->server.collect++;
-      return;
+      a_tcp->server.collect++;
     }
+
+    return;
+  }
+
   if (a_tcp->nids_state != NIDS_DATA)
-    {
-      // seems the stream is closing, log as much as possible
-      do_log (adres (a_tcp->addr), a_tcp->server.data,
-          a_tcp->server.count - a_tcp->server.offset);
-      return;
-    }
+  {
+    // seems the stream is closing, log as much as possible
+    do_log (adres (a_tcp->addr), a_tcp->server.data, a_tcp->server.count - a_tcp->server.offset);
+    return;
+  }
   if (a_tcp->server.count - a_tcp->server.offset < LOG_MAX)
-    {
-      // we haven't got enough data yet; keep all of it
-      nids_discard (a_tcp, 0);
-      return;
-    }
+  {
+    // we haven't got enough data yet; keep all of it
+    nids_discard (a_tcp, 0);
+    return;
+  }
 
   // enough data
   do_log (adres (a_tcp->addr), a_tcp->server.data, LOG_MAX);
@@ -78,15 +82,17 @@ main ()
 {
   logfd = open ("./logfile", O_WRONLY | O_CREAT | O_TRUNC, 0600);
   if (logfd < 0)
-    {
-      perror ("opening ./logfile:");
-      exit (1);
-    }
+  {
+    perror ("opening ./logfile:");
+    exit (1);
+  }
+
   if (!nids_init ())
-    {
-      fprintf (stderr, "%s\n", nids_errbuf);
-      exit (1);
-    }
+  {
+    fprintf (stderr, "%s\n", nids_errbuf);
+    exit (1);
+  }
+  
   nids_register_tcp (sniff_callback);
   nids_run ();
   return 0;
