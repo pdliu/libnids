@@ -6,13 +6,15 @@
 #ifndef _NIDS_SCAN_H
 #define _NIDS_SCAN_H
 
-struct scan {
+struct scan 
+{
   u_int addr;
   unsigned short port;
   u_char flags;
 };
 
-struct host {
+struct host 
+{
   struct host *next;
   struct host *prev;
   u_int addr;

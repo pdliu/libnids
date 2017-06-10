@@ -25,7 +25,9 @@ test_malloc(int x)
   char *ret = malloc(x);
 
   if (!ret)
+  {
     nids_params.no_mem("test_malloc");
+  }
 
   return ret;
 }
@@ -36,8 +38,13 @@ register_callback(struct proc_node **procs, void (*x))
   struct proc_node *ipp;
 
   for (ipp = *procs; ipp; ipp = ipp->next)
+  {
     if (x == ipp->item)
+    {
       return;
+    }
+  }
+
   ipp = mknew(struct proc_node);
   ipp->item = x;
   ipp->next = *procs;
@@ -50,15 +57,23 @@ unregister_callback(struct proc_node **procs, void (*x))
   struct proc_node *ipp;
   struct proc_node *ipp_prev = 0;
 
-  for (ipp = *procs; ipp; ipp = ipp->next) {
-    if (x == ipp->item) {
+  for (ipp = *procs; ipp; ipp = ipp->next) 
+  {
+    if (x == ipp->item) 
+    {
       if (ipp_prev)
-    ipp_prev->next = ipp->next;
+      {
+        ipp_prev->next = ipp->next;
+      }
       else
-    *procs = ipp->next;
+      {
+        *procs = ipp->next;
+      }
+      
       free(ipp);
       return;
     }
+
     ipp_prev = ipp;
   }
 }

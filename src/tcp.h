@@ -6,7 +6,8 @@
 #define _NIDS_TCP_H
 #include <sys/time.h>
 
-struct skbuff {
+struct skbuff 
+{
   struct skbuff *next;
   struct skbuff *prev;
 

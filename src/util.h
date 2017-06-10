@@ -9,12 +9,14 @@
 #define mknew(x)    (x *)test_malloc(sizeof(x))
 #define b_comp(x,y) (!memcmp(&(x), &(y), sizeof(x)))
 
-struct proc_node {
+struct proc_node 
+{
   void (*item)();
   struct proc_node *next;
 };
 
-struct lurker_node {
+struct lurker_node 
+{
   void (*item)();
   void *data;
   char whatto;

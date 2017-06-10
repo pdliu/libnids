@@ -169,12 +169,14 @@ extern u_char *nids_last_pcap_data;
 extern u_int nids_linkoffset;
 extern struct tcp_timeout *nids_tcp_timeouts;
 
-struct nids_chksum_ctl {
+struct nids_chksum_ctl 
+{
     u_int netaddr;
     u_int mask;
     u_int action;
     u_int reserved;
 };
+
 extern void nids_register_chksum_ctl(struct nids_chksum_ctl *, int);
 
 # ifdef __cplusplus
