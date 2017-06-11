@@ -34,7 +34,7 @@ OBJS            = checksum.o ip_fragment.o ip_options.o killtcp.o \
                   libnids.o scan.o tcp.o util.o allpromisc.o hash.o
 OBJS_SHARED     = $(OBJS:.o=_pic.o)
 .c.o:
-        $(CC) -c $(CFLAGS) -I. $(LIBS_CFLAGS) $<
+	$(CC) -c $(CFLAGS) -I. $(LIBS_CFLAGS) $<
 static: $(LIBSTATIC)
 shared: $(LIBSHARED)
 # How to write the following rules compactly and portably ?
