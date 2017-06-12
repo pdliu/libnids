@@ -119,8 +119,10 @@ main ()
     fprintf(stderr,"%s\n",nids_errbuf);
     exit(1);
   }
+
   nids_register_tcp (tcp_callback);
   nids_run ();
+  
   return 0;
 }
 

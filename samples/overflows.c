@@ -291,8 +291,10 @@ main ()
     fprintf(stderr,"%s\n",nids_errbuf);
     exit(1);
   }
+
   nids_register_tcp (detect_imap);
   nids_register_tcp (detect_ftpd);
   nids_run ();
+  
   return 0;
 }

@@ -95,5 +95,6 @@ main ()
   
   nids_register_tcp (sniff_callback);
   nids_run ();
+  
   return 0;
 }
