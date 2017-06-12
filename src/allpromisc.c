@@ -49,6 +49,7 @@ int set_all_promisc()
 
     lose(sock);
     return 1;
+    
 err:
     lose(sock);
     return 0;
