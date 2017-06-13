@@ -805,7 +805,7 @@ int nids_init()
     {
 #ifdef HAVE_LIBGTHREAD_2_0
         g_thread_init(NULL);
-        cap_queue=g_async_queue_new();
+        cap_queue = g_async_queue_new();
 #else
         strcpy(nids_errbuf, "libnids was compiled without threads support");
         return 0;
@@ -845,7 +845,7 @@ void nids_exit()
     /* I have no portable sys_sched_yield,
        and I don't want to add more synchronization...
     */
-        while (g_async_queue_length(cap_queue)>0)
+        while (g_async_queue_length(cap_queue) > 0)
         {
             usleep(100000);
         }
