@@ -6,3 +6,14 @@ config.log
 config.status
 
 Makefile
+
+libnids.IAB
+libnids.IAD
+libnids.IMB
+libnids.IMD
+libnids.PFI
+libnids.PO
+libnids.PR
+libnids.PRI
+libnids.PS
+libnids.WK3
