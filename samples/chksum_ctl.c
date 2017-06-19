@@ -34,8 +34,7 @@ int all_local_ipaddrs_chksum_disable()
         return -1;
     }
 
-    ctlp = (struct nids_chksum_ctl *) 
-           malloc(ifaces_count * sizeof(struct nids_chksum_ctl));
+    ctlp = (struct nids_chksum_ctl *)malloc(ifaces_count * sizeof(struct nids_chksum_ctl));
     if (!ctlp)
     {
         return -1;

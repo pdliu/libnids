@@ -11,7 +11,7 @@ int
 main ()
 {
   // here we can alter libnids params, for instance:
-  // nids_params.n_hosts=256;
+  // nids_params.n_hosts = 256;
   int fd;
   int time = 0;
   fd_set rset;
@@ -19,7 +19,7 @@ main ()
 
   if (!nids_init ())
   {
-    fprintf(stderr,"%s\n",nids_errbuf);
+    fprintf(stderr, "%s\n", nids_errbuf);
     exit(1);
   }
 
