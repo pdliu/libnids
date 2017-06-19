@@ -31,8 +31,6 @@ getrnd ()
   *ptr = rand ();
   *(ptr + 1) = rand ();
   *(ptr + 2) = rand ();
-
-
 }
 
 void
