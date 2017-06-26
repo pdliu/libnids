@@ -199,6 +199,7 @@ static void nids_syslog(int type, int errnum, struct ip *iph, void *data)
             {
                 strcat(buf, "various flags");
             }
+            
             syslog(nids_params.syslog_level, "%s", buf);
             break;
 
