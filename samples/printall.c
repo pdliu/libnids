@@ -83,6 +83,7 @@ tcp_callback (struct tcp_stream *a_tcp, void ** this_time_not_needed)
       write(1,buf,strlen(buf));
       return;
     }
+    
     // We don't have to check if urgent data to client has arrived,
     // because we haven't increased a_tcp->client.collect_urg variable.
     // So, we have some normal data to take care of.
