@@ -8,3 +8,6 @@ First, install rpm packages and related devel packages & head packages.
 -lnids -lpcap -lnet should be followed by -lgthread-2.0
 
 $ gcc -g -o printall printall.c -lnids -lpcap -lnet -lgthread-2.0
+
+current problem:
+undefined reference to symbol 'g_thread_exit'
