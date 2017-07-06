@@ -3,6 +3,8 @@ $ gcc printall.c -o printall
 $ gcc -g -o test test.c -lnids -lpcap -lnet
 
 
-libnids 1.22以后, 使用了glib2库中的gthread-2.0来实现多线程提高效率，因此在编译除了-lnids -lpcap -lnet 以外还要加上 -lgthread-2.0, 当然first need to安装glib2.x的rpm包和相关的devel和head包
+After libnids 1.22, gthread-2.0 from glib2 is used to realize multithreading, to improve performance.
+First, install rpm packages and related devel packages & head packages.
+-lnids -lpcap -lnet should be followed by -lgthread-2.0
 
 $ gcc -g -o printall printall.c -lnids -lpcap -lnet -lgthread-2.0
