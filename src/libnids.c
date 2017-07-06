@@ -667,15 +667,17 @@ static void cap_queue_process_thread()
      struct cap_queue_item *qitem;
 
      while(1) 
-     { /* loop "forever" */
-      qitem=g_async_queue_pop(cap_queue);
-      if (qitem==&EOF_item) 
-      {
-          break; /* EOF item received: we should exit */
-      }
-      call_ip_frag_procs(qitem->data,qitem->caplen);
-      free(qitem->data);
-      free(qitem);
+     {  
+         /* loop "forever" */
+        qitem = g_async_queue_pop(cap_queue);
+        if (qitem == &EOF_item) 
+        {
+            break; /* EOF item received: we should exit */
+        }
+
+        call_ip_frag_procs(qitem->data,qitem->caplen);
+        free(qitem->data);
+        free(qitem);
      }
 
      g_thread_exit(NULL);
